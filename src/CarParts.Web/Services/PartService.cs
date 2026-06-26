@@ -13,6 +13,9 @@ public class PartService(IPartRepository repository, ILogger<PartService> logger
     public Task<Part?> GetByIdAsync(int id, CancellationToken ct = default) =>
         repository.GetByIdAsync(id, ct);
 
+    public Task<Part?> GetByIdForReadAsync(int id, CancellationToken ct = default) =>
+        repository.GetByIdForReadAsync(id, ct);
+
     public async Task<ServiceResult> CreateAsync(PartInputModel input, CancellationToken ct = default)
     {
         if (await repository.PartNumberExistsAsync(input.PartNumber, ct: ct))

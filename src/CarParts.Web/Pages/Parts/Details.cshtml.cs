@@ -11,7 +11,7 @@ public class DetailsModel(IPartService service) : PageModel
 
     public async Task<IActionResult> OnGetAsync(int id, CancellationToken ct = default)
     {
-        var part = await service.GetByIdAsync(id, ct);
+        var part = await service.GetByIdForReadAsync(id, ct);
         if (part is null) return NotFound();
 
         Part = part;

@@ -19,6 +19,9 @@ public class PartRepository(AppDbContext db, ILogger<PartRepository> logger) : I
     public async Task<Part?> GetByIdAsync(int id, CancellationToken ct = default) =>
         await db.Parts.FindAsync([id], ct);
 
+    public async Task<Part?> GetByIdForReadAsync(int id, CancellationToken ct = default) =>
+        await db.Parts.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, ct);
+
     public async Task<bool> PartNumberExistsAsync(string partNumber, int? excludeId = null, CancellationToken ct = default) =>
         await db.Parts.AsNoTracking()
             .AnyAsync(p => p.PartNumber == partNumber && (excludeId == null || p.Id != excludeId), ct);
