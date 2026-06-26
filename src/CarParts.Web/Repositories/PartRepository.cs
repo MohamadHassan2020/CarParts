@@ -1,10 +1,11 @@
 using CarParts.Web.Data;
 using CarParts.Web.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CarParts.Web.Repositories;
 
-public class PartRepository(AppDbContext db) : IPartRepository
+public class PartRepository(AppDbContext db, ILogger<PartRepository> logger) : IPartRepository
 {
     public async Task<(IReadOnlyList<Part> Items, int TotalCount)> GetPagedAsync(
         int page, int pageSize, CancellationToken ct = default)
@@ -26,17 +27,20 @@ public class PartRepository(AppDbContext db) : IPartRepository
     {
         db.Parts.Add(part);
         await db.SaveChangesAsync(ct);
+        logger.LogDebug("Part {PartNumber} added with Id {Id}", part.PartNumber, part.Id);
     }
 
-    public void SetConcurrencyToken(Part part, Guid rowVersion) =>
+    public async Task UpdateAsync(Part part, Guid rowVersion, CancellationToken ct = default)
+    {
         db.Entry(part).Property(p => p.RowVersion).OriginalValue = rowVersion;
-
-    public Task CommitAsync(CancellationToken ct = default) =>
-        db.SaveChangesAsync(ct);
+        await db.SaveChangesAsync(ct);
+        logger.LogDebug("Part {Id} updated", part.Id);
+    }
 
     public async Task DeleteAsync(Part part, CancellationToken ct = default)
     {
         db.Parts.Remove(part);
         await db.SaveChangesAsync(ct);
+        logger.LogDebug("Part {Id} deleted", part.Id);
     }
 }
