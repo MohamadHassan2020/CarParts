@@ -1,0 +1,38 @@
+@page
+@model CarParts.Web.Pages.Parts.IndexModel
+@{
+    ViewData["Title"] = "Parts";
+}
+
+<h1>Parts</h1>
+<a class="btn btn-primary mb-3" asp-page="Create">Add Part</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Part Number</th>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var part in Model.Parts)
+        {
+            <tr>
+                <td>@part.PartNumber</td>
+                <td>@part.Name</td>
+                <td>@part.Brand</td>
+                <td>@part.Quantity</td>
+                <td>@part.Price.ToString("C")</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@part.Id">Edit</a> |
+                    <a asp-page="Details" asp-route-id="@part.Id">Details</a> |
+                    <a asp-page="Delete" asp-route-id="@part.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
