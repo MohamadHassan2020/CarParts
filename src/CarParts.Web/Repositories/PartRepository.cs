@@ -17,7 +17,7 @@ public class PartRepository(AppDbContext db, ILogger<PartRepository> logger) : I
     }
 
     public async Task<Part?> GetByIdAsync(int id, CancellationToken ct = default) =>
-        await db.Parts.FindAsync(new object?[] { id }, ct);
+        await db.Parts.FindAsync([id], ct);
 
     public async Task<bool> PartNumberExistsAsync(string partNumber, int? excludeId = null, CancellationToken ct = default) =>
         await db.Parts.AsNoTracking()
