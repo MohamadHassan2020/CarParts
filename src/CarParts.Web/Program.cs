@@ -35,6 +35,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlite(conn);
 });
 
+builder.Services.AddScoped<IAdminCredentialService, AdminCredentialService>();
 builder.Services.AddScoped<IPartRepository, PartRepository>();
 builder.Services.AddScoped<IPartService, PartService>();
 
