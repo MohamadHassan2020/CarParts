@@ -112,10 +112,11 @@ dotnet ef migrations add <MigrationName> --project src/CarParts.Web --startup-pr
 
 ---
 
-## Known Debt (do not re-introduce, fix if you touch the area)
+## Known Debt
 
-- `AdminSettings.Password` is plain text — should be a PBKDF2/BCrypt hash stored in the config.
-- `IPartRepository.CommitAsync` leaks Unit-of-Work concern — prefer self-contained repository methods.
-- `DeleteModel.OnPostAsync` does not handle a failed `ServiceResult` — always check the result.
-- No structured logging (`ILogger<T>`) in services or repositories.
-- SQLite is dev-only — production should target SQL Server or PostgreSQL.
+All five original debt items have been resolved:
+- Password hashed with PBKDF2-SHA256 (100k iterations, 128-bit salt) stored in `appsettings.json` as `Admin.PasswordHash`.
+- `CommitAsync`/`SetConcurrencyToken` removed from `IPartRepository`; replaced with `UpdateAsync(part, rowVersion)`.
+- `DeleteModel.OnPostAsync` now checks `ServiceResult` and returns `NotFound` on failure.
+- `ILogger<T>` added to `PartService` (Info/Warn/Error) and `PartRepository` (Debug).
+- SQL Server support added: set `DatabaseProvider: SqlServer` in config and provide a `DefaultConnection` string to switch providers.

@@ -6,6 +6,7 @@ using CarParts.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CarParts.Tests;
 
@@ -20,7 +21,9 @@ public class PartPageTests : IDisposable
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         _db = new AppDbContext(options);
-        _service = new PartService(new PartRepository(_db));
+        _service = new PartService(
+            new PartRepository(_db, NullLogger<PartRepository>.Instance),
+            NullLogger<PartService>.Instance);
     }
 
     public void Dispose() => _db.Dispose();

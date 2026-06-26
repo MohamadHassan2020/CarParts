@@ -20,7 +20,9 @@ public class DeleteModel(IPartService service) : PageModel
 
     public async Task<IActionResult> OnPostAsync(int id, CancellationToken ct = default)
     {
-        await service.DeleteAsync(id, ct);
+        var result = await service.DeleteAsync(id, ct);
+        if (!result.Success)
+            return NotFound();
         return RedirectToPage("Index");
     }
 }

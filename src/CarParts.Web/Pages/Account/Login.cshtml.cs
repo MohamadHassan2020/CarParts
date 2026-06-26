@@ -48,9 +48,24 @@ public class LoginModel(IOptions<AdminSettings> options) : PageModel
         if (!string.Equals(username, settings.Username, StringComparison.OrdinalIgnoreCase))
             return false;
 
-        var storedHash = SHA256.HashData(Encoding.UTF8.GetBytes(settings.Password));
-        var inputHash  = SHA256.HashData(Encoding.UTF8.GetBytes(password));
-        return CryptographicOperations.FixedTimeEquals(storedHash, inputHash);
+        var parts = settings.PasswordHash.Split('.');
+        if (parts.Length != 2) return false;
+
+        byte[] salt, storedHash;
+        try
+        {
+            salt       = Convert.FromBase64String(parts[0]);
+            storedHash = Convert.FromBase64String(parts[1]);
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+
+        var inputHash = Rfc2898DeriveBytes.Pbkdf2(
+            Encoding.UTF8.GetBytes(password), salt, 100_000, HashAlgorithmName.SHA256, 32);
+
+        return CryptographicOperations.FixedTimeEquals(inputHash, storedHash);
     }
 }
 

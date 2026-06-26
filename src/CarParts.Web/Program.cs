@@ -23,9 +23,17 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AuthorizeFolder("/Parts");
 });
 
+var provider = builder.Configuration["DatabaseProvider"] ?? "Sqlite";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? "Data Source=carparts.db"));
+{
+    var conn = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? "Data Source=carparts.db";
+
+    if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlServer(conn);
+    else
+        options.UseSqlite(conn);
+});
 
 builder.Services.AddScoped<IPartRepository, PartRepository>();
 builder.Services.AddScoped<IPartService, PartService>();
