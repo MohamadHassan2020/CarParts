@@ -1,18 +1,21 @@
-using CarParts.Web.Data;
 using CarParts.Web.Models;
+using CarParts.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CarParts.Web.Pages.Parts;
 
-public class EditModel(AppDbContext db) : PageModel
+public class EditModel(IPartService service) : PageModel
 {
     [BindProperty]
     public PartInputModel Input { get; set; } = new();
 
-    public async Task<IActionResult> OnGetAsync(int id)
+    [BindProperty]
+    public Guid RowVersion { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(int id, CancellationToken ct = default)
     {
-        var part = await db.Parts.FindAsync(id);
+        var part = await service.GetByIdAsync(id, ct);
         if (part is null) return NotFound();
 
         Input = new PartInputModel
@@ -23,25 +26,23 @@ public class EditModel(AppDbContext db) : PageModel
             Quantity   = part.Quantity,
             Price      = part.Price,
         };
+        RowVersion = part.RowVersion;
 
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(int id)
+    public async Task<IActionResult> OnPostAsync(int id, CancellationToken ct = default)
     {
         if (!ModelState.IsValid)
             return Page();
 
-        var part = await db.Parts.FindAsync(id);
-        if (part is null) return NotFound();
+        var result = await service.UpdateAsync(id, Input, RowVersion, ct);
+        if (!result.Success)
+        {
+            ModelState.AddModelError(string.Empty, result.Error!);
+            return Page();
+        }
 
-        part.PartNumber = Input.PartNumber;
-        part.Name       = Input.Name;
-        part.Brand      = Input.Brand;
-        part.Quantity   = Input.Quantity;
-        part.Price      = Input.Price;
-
-        await db.SaveChangesAsync();
         return RedirectToPage("Index");
     }
 }

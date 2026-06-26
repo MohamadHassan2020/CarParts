@@ -1,33 +1,29 @@
-using CarParts.Web.Data;
 using CarParts.Web.Models;
+using CarParts.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CarParts.Web.Pages.Parts;
 
-public class CreateModel(AppDbContext db) : PageModel
+public class CreateModel(IPartService service) : PageModel
 {
     [BindProperty]
     public PartInputModel Input { get; set; } = new();
 
     public IActionResult OnGet() => Page();
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(CancellationToken ct = default)
     {
         if (!ModelState.IsValid)
             return Page();
 
-        var part = new Part
+        var result = await service.CreateAsync(Input, ct);
+        if (!result.Success)
         {
-            PartNumber = Input.PartNumber,
-            Name       = Input.Name,
-            Brand      = Input.Brand,
-            Quantity   = Input.Quantity,
-            Price      = Input.Price,
-        };
+            ModelState.AddModelError(string.Empty, result.Error!);
+            return Page();
+        }
 
-        db.Parts.Add(part);
-        await db.SaveChangesAsync();
         return RedirectToPage("Index");
     }
 }

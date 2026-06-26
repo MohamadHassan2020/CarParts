@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarParts.Web.Models;
 
@@ -18,7 +17,6 @@ public class PartInputModel
     [Range(0, 100_000)]
     public int Quantity { get; set; }
 
-    [Column(TypeName = "decimal(18,2)")]
-    [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+    [Range(0.01, 9_999_999.99, ErrorMessage = "Price must be between 0.01 and 9,999,999.99.")]
     public decimal Price { get; set; }
 }

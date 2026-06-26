@@ -9,8 +9,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Part>()
-            .HasIndex(p => p.PartNumber)
-            .IsUnique();
+        modelBuilder.Entity<Part>(e =>
+        {
+            e.HasIndex(p => p.PartNumber).IsUnique();
+            e.Property(p => p.Price).HasColumnType("decimal(18,2)");
+            e.Property(p => p.RowVersion).IsConcurrencyToken();
+        });
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in ChangeTracker.Entries<Part>()
+            .Where(e => e.State == EntityState.Modified))
+        {
+            entry.Entity.RowVersion = Guid.NewGuid();
+        }
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

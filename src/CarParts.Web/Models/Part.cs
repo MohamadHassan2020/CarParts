@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarParts.Web.Models;
 
@@ -17,10 +16,9 @@ public class Part
     [Required, StringLength(100)]
     public string Brand { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
     public int Quantity { get; set; }
 
-    [Column(TypeName = "decimal(18,2)")]
-    [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
     public decimal Price { get; set; }
+
+    public Guid RowVersion { get; set; } = Guid.NewGuid();
 }

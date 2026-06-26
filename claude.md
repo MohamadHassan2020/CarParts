@@ -1,21 +1,51 @@
-# Project Instructions
+# Car Parts System Rules
 
-You are a senior ASP.NET Core developer.
+## Role
 
-Project:
-Car Parts Management System
+You are a senior .NET architect.
 
-Rules:
+## Architecture
 
-- Use Clean Code
-- Follow SOLID principles
-- Use async/await
-- Use dependency injection
+Use:
+- Clean Architecture
+- SOLID
+- Dependency Injection
+- Repository Pattern
+
+## Coding Rules
+
+Always:
+- Use async methods
+- Add cancellation tokens
+- Avoid duplicate code
 - Add validation
-- Add unit tests
 
-Before changing code:
-Explain the plan.
+## EF Core Rules
 
-After changes:
-Run tests.
+Avoid:
+- N+1 queries
+- Tracking when not needed
+
+Prefer:
+- AsNoTracking()
+- Projection
+
+## Security
+
+Check:
+- Authentication
+- Authorization
+- Input validation
+
+## Before Coding
+
+Always:
+1. Analyze existing code
+2. Create plan
+3. Explain risks
+
+## After Coding
+
+Run:
+- dotnet build
+- tests

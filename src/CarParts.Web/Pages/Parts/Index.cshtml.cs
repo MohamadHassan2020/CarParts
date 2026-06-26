@@ -1,16 +1,21 @@
-using CarParts.Web.Data;
 using CarParts.Web.Models;
+using CarParts.Web.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarParts.Web.Pages.Parts;
 
-public class IndexModel(AppDbContext db) : PageModel
+public class IndexModel(IPartService service) : PageModel
 {
-    public IReadOnlyList<Part> Parts { get; private set; } = [];
+    public const int PageSize = 20;
 
-    public async Task OnGetAsync()
+    public IReadOnlyList<Part> Parts { get; private set; } = [];
+    public int TotalCount { get; private set; }
+    public int CurrentPage { get; private set; }
+    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+
+    public async Task OnGetAsync(int page = 1, CancellationToken ct = default)
     {
-        Parts = await db.Parts.AsNoTracking().OrderBy(p => p.Name).ToListAsync();
+        CurrentPage = Math.Max(1, page);
+        (Parts, TotalCount) = await service.GetPagedAsync(CurrentPage, PageSize, ct);
     }
 }
