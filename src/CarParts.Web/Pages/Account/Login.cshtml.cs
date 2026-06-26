@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CarParts.Web.Models;
 using CarParts.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -38,14 +39,4 @@ public class LoginModel(IAdminCredentialService credentials) : PageModel
 
         return LocalRedirect(ReturnUrl);
     }
-}
-
-public class LoginInputModel
-{
-    [System.ComponentModel.DataAnnotations.Required]
-    public string Username { get; set; } = string.Empty;
-
-    [System.ComponentModel.DataAnnotations.Required]
-    [System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-    public string Password { get; set; } = string.Empty;
 }
