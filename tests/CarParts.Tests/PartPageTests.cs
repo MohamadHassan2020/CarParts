@@ -75,9 +75,8 @@ public class PartPageTests : IDisposable
         await _db.SaveChangesAsync();
 
         var page = new DeleteModel(_db);
-        page.Part = new Part { Id = part.Id };
 
-        var result = await page.OnPostAsync();
+        var result = await page.OnPostAsync(part.Id);
 
         Assert.IsType<RedirectToPageResult>(result);
         Assert.Equal(0, await _db.Parts.CountAsync());
@@ -116,7 +115,7 @@ public class PartPageTests : IDisposable
         var page = new EditModel(_db);
         page.Part = new Part { Id = part.Id, PartNumber = "P005", Name = "Wiper Blade", Brand = "Bosch", Quantity = 8, Price = 13.00m };
 
-        var result = await page.OnPostAsync();
+        var result = await page.OnPostAsync(part.Id);
 
         Assert.IsType<RedirectToPageResult>(result);
         var updated = await _db.Parts.FindAsync(part.Id);

@@ -18,12 +18,20 @@ public class EditModel(AppDbContext db) : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(int id)
     {
         if (!ModelState.IsValid)
             return Page();
 
-        db.Parts.Update(Part);
+        var part = await db.Parts.FindAsync(id);
+        if (part is null) return NotFound();
+
+        part.PartNumber = Part.PartNumber;
+        part.Name       = Part.Name;
+        part.Brand      = Part.Brand;
+        part.Quantity   = Part.Quantity;
+        part.Price      = Part.Price;
+
         await db.SaveChangesAsync();
         return RedirectToPage("Index");
     }

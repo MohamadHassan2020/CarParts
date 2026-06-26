@@ -7,8 +7,7 @@ namespace CarParts.Web.Pages.Parts;
 
 public class DeleteModel(AppDbContext db) : PageModel
 {
-    [BindProperty]
-    public Part Part { get; set; } = new();
+    public Part Part { get; private set; } = new();
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
@@ -18,9 +17,9 @@ public class DeleteModel(AppDbContext db) : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(int id)
     {
-        var part = await db.Parts.FindAsync(Part.Id);
+        var part = await db.Parts.FindAsync(id);
         if (part is not null)
         {
             db.Parts.Remove(part);
