@@ -8,13 +8,22 @@ namespace CarParts.Web.Pages.Parts;
 public class EditModel(AppDbContext db) : PageModel
 {
     [BindProperty]
-    public Part Part { get; set; } = new();
+    public PartInputModel Input { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var part = await db.Parts.FindAsync(id);
         if (part is null) return NotFound();
-        Part = part;
+
+        Input = new PartInputModel
+        {
+            PartNumber = part.PartNumber,
+            Name       = part.Name,
+            Brand      = part.Brand,
+            Quantity   = part.Quantity,
+            Price      = part.Price,
+        };
+
         return Page();
     }
 
@@ -26,11 +35,11 @@ public class EditModel(AppDbContext db) : PageModel
         var part = await db.Parts.FindAsync(id);
         if (part is null) return NotFound();
 
-        part.PartNumber = Part.PartNumber;
-        part.Name       = Part.Name;
-        part.Brand      = Part.Brand;
-        part.Quantity   = Part.Quantity;
-        part.Price      = Part.Price;
+        part.PartNumber = Input.PartNumber;
+        part.Name       = Input.Name;
+        part.Brand      = Input.Brand;
+        part.Quantity   = Input.Quantity;
+        part.Price      = Input.Price;
 
         await db.SaveChangesAsync();
         return RedirectToPage("Index");

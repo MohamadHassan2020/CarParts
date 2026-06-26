@@ -44,7 +44,7 @@ public class PartPageTests : IDisposable
     public async Task Create_SavesPartAndRedirects()
     {
         var page = new CreateModel(_db);
-        page.Part = new Part { PartNumber = "P003", Name = "Spark Plug", Brand = "NGK", Quantity = 20, Price = 4.50m };
+        page.Input = new PartInputModel { PartNumber = "P003", Name = "Spark Plug", Brand = "NGK", Quantity = 20, Price = 4.50m };
 
         var result = await page.OnPostAsync();
 
@@ -56,8 +56,8 @@ public class PartPageTests : IDisposable
     public async Task Create_InvalidModel_ReturnsPage()
     {
         var page = new CreateModel(_db);
-        page.ModelState.AddModelError("Part.Name", "Required");
-        page.Part = new Part();
+        page.ModelState.AddModelError("Input.Name", "Required");
+        page.Input = new PartInputModel();
 
         var result = await page.OnPostAsync();
 
@@ -113,7 +113,7 @@ public class PartPageTests : IDisposable
         _db.ChangeTracker.Clear();
 
         var page = new EditModel(_db);
-        page.Part = new Part { Id = part.Id, PartNumber = "P005", Name = "Wiper Blade", Brand = "Bosch", Quantity = 8, Price = 13.00m };
+        page.Input = new PartInputModel { PartNumber = "P005", Name = "Wiper Blade", Brand = "Bosch", Quantity = 8, Price = 13.00m };
 
         var result = await page.OnPostAsync(part.Id);
 
